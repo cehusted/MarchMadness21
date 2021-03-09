@@ -1,0 +1,158 @@
+https://www.kaggle.com/c/ncaam-march-mania-2021/data
+This section provides everything you need to build a simple prediction model and submit predictions.
+    * Team ID's and Team Names
+    * Tournament seeds since 1984-85 season
+    * Final scores of all regular season, conference tournament, and NCAA® tournament games since 1984-85 season
+    * Season-level details including dates and region names
+    * Example submission file for stage 1
+
+#################################################################
+####################### The Basics ##############################
+#################################################################
+MTeams.csv
+    TeamID: Every Team ID (int)
+    TeamName: Corresponding TeamName (str)
+    FirstD1Season: First ever year played in D1 (int)
+    LastD1Season: Most recent year played in D1 (int)
+
+MSeasons.csv
+    Season: Year NCAA tourney was played for that season (int)
+    DayZero: Date first game of season was played (date)
+    RegionW: First of the four regions of play, alphabetically speaking (str)
+    RegionX: The region which plans RegionW in the semis (str)
+    RegionY: Whichever of the remaining regions that comes first alphabetically (str)
+    RegionZ: Remaining region (str)
+
+Conferences.csv
+    ConfAbbrev: Conference Abbreviation (str)
+    Description: Full Conference Name (str)
+
+MNCAATourneySeeds.csv
+    Season: Year NCAA tourney was played for that season (int)
+    Seed: Identifier for Region and Seed (str)
+    TeamID: Team ID of corresponding seed (int)
+
+#################################################################
+####################### Team Box Scores #########################
+#################################################################
+MRegularSeasonDetailedResults.csv
+MNCAATourneyDetailedResults.csv
+    Season: Year NCAA tourney was played for that season (int)
+    DayNum: Number of days game took place after day 0 (int)
+    WTeamID: Team ID of winning team (int)
+    WScore: Score of winning team (int)
+    LTeamID: Team ID of losing team (int)
+    LScore: Score of losing team (int)
+    WLoc: Location of winning team {Home/Away/Neutral} (char)
+    NumOT: Number of overtimes played (int)
+    WFGM: Field Goals Made by Winning team (int)
+    WFGA: Field Goals Attempted by Winning team (int)
+    WFGM3: 3-pointers Made by Winning team (int)
+    WFGA3: 3-pointers Attempted by Winning team (int)
+    WFTM: Free-throws Made by Winning team (int)
+    WFTA: Free-throws Attempted by Winning team (int)
+    WOR: Offensive Rebounds by Winning team (int)
+    WDR: Defensive Rebounds by Winning team (int)
+    WAst: Assists by Winning team (int)
+    WTO: Turnovers committed by Winning team (int)
+    WStl: Steals accomplished by Winning team (int)
+    WBlk: Blocks accomplished by Winning team (int)
+    WPF: Personal Fouls committed by winning team (int)
+    !!! Same set of metrics above, but for LOSING TEAM
+
+MRegularSeasonCompactResults.csv
+MNCAATourneyCompactResults.csv
+    Season: Year NCAA tourney was played for that season (int)
+    DayNum: Number of days game took place after day 0 (int)
+    WTeamID: Team ID of winning team (int)
+    WScore: Score of winning team (int)
+    LTeamID: Team ID of losing team (int)
+    LScore: Score of losing team (int)
+    WLoc: Location of winning team {Home/Away/Neutral} (char)
+    NumOT: Number of overtimes played (int)
+
+MConferenceTourneyGames.csv
+    Season: Year NCAA tourney was played for that season (int)
+    ConfAbbrev: Conference Abbreviation (str)
+    DayNum: Number of days game took place after day 0 (int)
+    WTeamID: Team ID of winning team (int)
+    LTeamID: Team ID of losing team (int)
+
+#################################################################
+####################### Geography ###############################
+#################################################################
+Cities.csv
+    CityID: Every City ID (int)
+    City: City name (str)
+    State: State abbreviation (str)
+
+MGameCities.csv
+    Season: Year NCAA tourney was played for that season (int)
+    DayNum: Number of days game took place after day 0 (int)
+    WTeamID: Team ID of winning team (int)
+    LTeamID: Team ID of losing team (int)
+    CRType: Type of game {Regular/NCAA/Secondary} (str)
+    CityID: City ID of game location (int)
+
+#################################################################
+########################## Supplements ##########################
+#################################################################
+MTeamCoaches.csv
+    Season: Year NCAA tourney was played for that season (int)
+    TeamID: Team ID of corresponding seed (int)
+    FirstDayNum: First day of the season that coach coached the team (int)
+    LastDayNum: Last day of the season that coach coached the team (int)
+    CoachName: Text representation of the coach's full name (str)
+
+MTeamSpellings.csv
+    TeamNameSpelling: All possible team-name spellings (str)
+    TeamID: Corresponding team IDs (int)
+
+MTeamConferences.csv
+    Season: Year NCAA tourney was played for that season (int)
+    TeamID: Team ID of corresponding seed (int)
+    ConfAbbrev: Conference Abbreviation (str)
+
+MNCAATourneySlots.csv
+    Season: Year NCAA tourney was played for that season (int)
+    Slot: Three-character string identifying region & winning seed for play-ins, such as W16 or Z13. For regular
+          tournament games, 4-char string, tells you which round (R1, R2, R3...) and expected seed of the favored team (str)
+    StrongSeed: Expected stronger-seeded team that plays in this game (str)
+    WeakSeed: Expected weaker-seeded team that plays in this game (str)
+
+MNCAATourneySeedRoundSlots.csv
+    Seed: Identifier for Region and Seed (str)
+    GameRound: Round game took place in
+                    0 - Play-in ganes
+                    1/2 - First weekend
+                    3/4 - Second weekend
+                    5 - National semifinals
+                    6 - National championship
+    GameSlot: Game slot played in, during the given GameRound
+    EarlyDayNum: Earliest possible DayNums that the game might be played on
+    LateDayNum: Latest possible DayNums that the game might be played on
+
+MSecondaryResults.csv
+    Season: Year NCAA tourney was played for that season (int)
+    SecondaryTourney: Abbreviation of the tournament (str)
+    TeamID: Team ID of corresponding seed (int)
+
+MSecondaryTourneyCompactResults.csv
+    Season: Year NCAA tourney was played for that season (int)
+    DayNum: Number of days game took place after day 0 (int)
+    WTeamID: Team ID of winning team (int)
+    WScore: Score of winning team (int)
+    LTeamID: Team ID of losing team (int)
+    LScore: Score of losing team (int)
+    WLoc: ocation of winning team {Home/Away/Neutral} (char)
+    NumOT: Number of overtime periods played (int)
+    SecondaryTourney: Abbreviation of the tournament (str)
+
+MMasseyOrdinals.csv
+    Season: Year NCAA tourney was played for that season (int)
+    RankingDayNum:  For example, if RankingDayNum is 110, then the rankings ought to be based upon game outcomes up
+                    through DayNum=109, and so you can use the rankings to make predictions of games on DayNum=110
+                    or later (int)
+    SystemName: 3-letter abbreviation for each distinct ranking system (str)
+    TeamID: Team ID of corresponding seed (int)
+    OrdinalRank: Overall ranking of the team in the underlying system (int)
