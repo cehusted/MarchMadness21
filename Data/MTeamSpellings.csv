@@ -27,6 +27,8 @@ alcorn state,1108
 alcorn-state,1108
 alliant international,1109
 alliant intl,1109
+a&m-corpus chris,1394
+a&m-corpus christi,1394
 am-corpus-chris,1394
 american,1110
 american u.,1110
@@ -45,6 +47,7 @@ arizona state,1113
 arizona-st,1113
 arizona-state,1113
 ark little rock,1114
+arkansas pine bluff,1115
 ark pine bluff,1115
 ark-pine-bluff,1115
 ark.-pine bluff,1115
@@ -52,6 +55,7 @@ arkansas,1116
 arkansas st,1117
 arkansas st.,1117
 arkansas state,1117
+arkansas little rock,1114
 arkansas-little rock,1114
 arkansas-little-rock,1114
 arkansas-pine bluff,1115
@@ -78,6 +82,7 @@ baylor,1124
 bellarmine,1468
 belmont,1125
 bethune-cookman,1126
+bethune cookman,1126
 binghamton,1127
 birmingham so,1128
 birmingham southern,1128
@@ -118,6 +123,7 @@ cal poly slo,1142
 cal riverside,1415
 cal st. fullerton,1168
 cal st. northridge,1169
+cal st. bakersfield,1167
 cal state bakersfield,1167
 cal state fullerton,1168
 cal state northridge,1169
@@ -228,6 +234,7 @@ depaul,1177
 detroit,1178
 detroit mercy,1178
 detroit-mercy,1178
+dixie st.,1469
 dixie st,1469
 drake,1179
 drexel,1180
@@ -360,6 +367,7 @@ illinois,1228
 illinois st,1229
 illinois st.,1229
 illinois state,1229
+illinois chicago,1227
 illinois-chicago,1227
 illinois-st,1229
 illinois-state,1229
@@ -430,6 +438,7 @@ little rock,1114
 little-rock,1114
 liu brooklyn,1254
 liu-brooklyn,1254
+liu,1254
 long beach st,1253
 long beach st.,1253
 long beach state,1253
@@ -444,7 +453,9 @@ longwood,1255
 louisiana,1418
 louisiana state,1261
 louisiana tech,1256
+louisiana lafayette,1418
 louisiana-lafayette,1418
+louisiana monroe,1419
 louisiana-monroe,1419
 louisiana-state,1261
 louisiana-tech,1256
@@ -473,6 +484,7 @@ maryland,1268
 maryland - e. shore,1271
 maryland-baltimore county,1420
 maryland-baltimore-county,1420
+maryland eastern shore,1271
 maryland-eastern shore,1271
 maryland-eastern-shore,1271
 massachusetts,1269
@@ -524,6 +536,7 @@ mississippi st,1280
 mississippi st.,1280
 mississippi state,1280
 mississippi val.,1290
+mississippi valley st.,1290
 mississippi valley state,1290
 mississippi-st,1280
 mississippi-state,1280
@@ -858,6 +871,7 @@ south-dakota-st,1355
 south-dakota-state,1355
 south-fla,1378
 south-florida,1378
+southeast missouri st.,1369
 southeast missouri state,1369
 southeast mo. st.,1369
 southeast-missouri-state,1369
@@ -890,6 +904,8 @@ southern-mississippi,1379
 southern-u,1380
 southern-university,1380
 southern-utah,1381
+southwest missouri st.,1283
+southeast missouri st.,1283
 southwest missouri state,1283
 st bonaventure,1382
 st francis (ny),1383
@@ -914,8 +930,11 @@ st-josephs-pa,1386
 st-marys-ca,1388
 st-peters,1389
 st. bonaventure,1382
+st. francis bkn,1383
 st. francis (bkn),1383
+st. francis ny,1383
 st. francis (ny),1383
+st. francis pa,1384
 st. francis (pa),1384
 st. francis brooklyn,1383
 st. francis-ny,1383
@@ -939,6 +958,7 @@ sw missouri st.,1283
 syracuse,1393
 tam c,1394
 tam c. christi,1394
+tarleton st.,1470
 tarleton st,1470
 tcu,1395
 temple,1396
@@ -949,6 +969,7 @@ tennessee st.,1398
 tennessee state,1398
 tennessee tech,1399
 tennessee-chattanooga,1151
+tennessee martin,1404
 tennessee-martin,1404
 tennessee-st,1398
 tennessee-state,1398
@@ -959,9 +980,11 @@ texas a&m,1401
 texas a&m cc,1394
 texas a&m corpus,1394
 texas a&m-cc,1394
+texas a&m corpus chris,1394
 texas a&m-corpus christi,1394
 texas arlington,1426
 texas christian,1395
+ut rio grande valley,1410
 texas rio grande valley,1410
 texas san antonio,1427
 texas southern,1411
@@ -975,12 +998,14 @@ texas-arlington,1426
 texas-christian,1395
 texas-el paso,1431
 texas-el-paso,1431
+texas pan american,1410
 texas-pan american,1410
 texas-pan-american,1410
 texas-rio grande valley,1410
 texas-san antonio,1427
 texas-san antonio(ut,1427
 texas-san-antonio,1427
+southwest texas st.,1411
 texas-southern,1411
 texas-st,1402
 texas-state,1402
@@ -1123,6 +1148,7 @@ william--mary,1456
 william-mary,1456
 winston salem,1445
 winston-salem,1445
+winston salem st.,1445
 winston-salem-state,1445
 winthrop,1457
 wis.-green bay,1453

@@ -10,13 +10,13 @@ It sits atop an HTML or XML parser, providing Pythonic idioms for iterating, sea
 """
 
 import os
-import pandas
+import pandas as pd
 import numpy as np
 from requests import get
 from contextlib import closing
 from bs4 import BeautifulSoup
-pandas.set_option('display.width', 320)
-pandas.set_option('display.max_columns', 18)
+pd.set_option('display.width', 320)
+pd.set_option('display.max_columns', 18)
 
 
 def simple_get(url):
@@ -32,29 +32,29 @@ def simple_get(url):
 
 if os.path.exists('KenPom.csv'):
     print("Retrieving Saved KenPom Data...")
-    KenPom = pandas.read_csv('KenPom.csv')
+    KenPom = pd.read_csv('KenPom.csv')
 else:
     dictionary = {}
     baseURL = "https://kenpom.com/index.php?y="
-    for year in range(2002, 2022):
-        print("Retrieving {} Data...".format(year))
-        URL = baseURL + str(year)
+    for Season in range(2002, 2022):
+        print("Retrieving {} Data...".format(Season))
+        URL = baseURL + str(Season)
         rawHTML = simple_get(URL)
         HTML = BeautifulSoup(rawHTML, 'html5lib')
         # "soupNugget.text" grabs the actually relevant info within each "td" group (see example below)
         data = [soupNugget.text for soupNugget in HTML.select("td")]      # (7413,)   type='list'
-        dictionary[year] = pandas.DataFrame(np.array(data).reshape(int((len(data)/21)), 21))
-        dictionary[year].columns = ['rank', 'school', 'conference', 'w_l', 'adjem', 'adjo', 'adjoR', 'adjd', 'adjdR',
+        dictionary[Season] = pd.DataFrame(np.array(data).reshape(int((len(data)/21)), 21))
+        dictionary[Season].columns = ['rank', 'school', 'conference', 'w_l', 'adjem', 'adjo', 'adjoR', 'adjd', 'adjdR',
                                     'adjt', 'adjtR', 'luck', 'luckR', 'adjems', 'adjemsR', 'oppos', 'opposR', 'oppds',
                                     'oppdsR', 'adjemn', 'adjemnR']
 
-    KenPom = pandas.DataFrame(columns=['rank', 'school', 'conference', 'w_l', 'adjem', 'adjo', 'adjoR', 'adjd', 'adjdR',
+    KenPom = pd.DataFrame(columns=['rank', 'school', 'conference', 'w_l', 'adjem', 'adjo', 'adjoR', 'adjd', 'adjdR',
                                        'adjt', 'adjtR', 'luck', 'luckR', 'adjems', 'adjemsR', 'oppos', 'opposR',
                                        'oppds', 'oppdsR', 'adjemn', 'adjemnR', 'seed', 'name'])
-    for year in reversed(list(dictionary.keys())):
-        temp = dictionary[year]
-        temp['year'] = year
-        KenPom = pandas.concat([KenPom, temp], sort=False)
+    for Season in reversed(list(dictionary.keys())):
+        temp = dictionary[Season]
+        temp['Season'] = Season
+        KenPom = pd.concat([KenPom, temp], sort=False)
 
     KenPom.reset_index(inplace=True, drop=True)      # Resets lots of duplicated indices ---- very important!!
 
@@ -69,41 +69,47 @@ else:
             KenPom.loc[idx, 'seed'] = 0
             KenPom.loc[idx, 'name'] = school
 
+    # Add TeamID column
+    spellings = pd.read_csv('Data\MTeamSpellings.csv', sep='\,', engine='python')
+    KenPom['name'] = KenPom['name'].str.lower()
+    KenPom = KenPom.merge(spellings, left_on=['name'], right_on=['TeamNameSpelling'], how='left')
+
     # Create 'win', 'loss', 'win%' columns
     KenPom['wins'] = [int(record.split("-")[0]) for record in KenPom['w_l']]
     KenPom['losses'] = [int(record.split("-")[1]) for record in KenPom['w_l']]
     KenPom['wpct'] = KenPom['wins'] / (KenPom['wins'] + KenPom['losses'])
 
-    metaData = [['rank', 'int'], ['adjem', 'float'], ['adjo', 'float'], ['adjoR', 'int'], ['adjd', 'float'], ['adjdR', 'int'],
-                ['adjt', 'float'], ['adjtR', 'int'], ['luck', 'float'], ['luckR', 'int'], ['adjems', 'float'],
-                ['adjemsR', 'int'], ['oppos', 'float'], ['opposR', 'int'], ['oppds', 'float'], ['oppdsR', 'int'],
-                ['adjemn', 'float'], ['adjemnR', 'int'], ['year', 'int']]
+    metaData = [['rank', 'int'], ['adjem', 'float'], ['adjo', 'float'], ['adjoR', 'int'], ['adjd', 'float'],
+                ['adjdR', 'int'], ['adjt', 'float'], ['adjtR', 'int'], ['luck', 'float'], ['luckR', 'int'],
+                ['adjems', 'float'], ['adjemsR', 'int'], ['oppos', 'float'], ['opposR', 'int'], ['oppds', 'float'],
+                ['oppdsR', 'int'], ['adjemn', 'float'], ['adjemnR', 'int'], ['seed', 'int'], ['name', 'str'],
+                ['Season', 'int'], ['TeamID', 'int']]
 
     for data in metaData:
         KenPom[data[0]] = KenPom[data[0]].astype(data[1])
 
-    KenPom = KenPom[['year', 'rank', 'name', 'seed', 'conference', 'wins', 'losses', 'wpct', 'adjem', 'w_l',
-                     'school', 'adjo', 'adjoR', 'adjd', 'adjdR', 'adjt', 'adjtR', 'luck', 'luckR',
-                    'adjems', 'adjemsR', 'oppos', 'opposR', 'oppds', 'oppdsR', 'adjemn', 'adjemnR']]
+    KenPom = KenPom[['Season', 'rank', 'school', 'TeamID', 'seed', 'conference', 'wins', 'losses', 'wpct', 'adjem',
+                     'adjo', 'adjd', 'adjt', 'luck', 'adjems', 'oppos', 'oppds', 'adjemn', 'adjoR', 'adjdR', 'adjtR',
+                     'luckR', 'adjemsR', 'opposR', 'oppdsR', 'adjemnR']]
     KenPom.to_csv("KenPom.csv", index=False)
 
 # Practice queries
 print("Prints Top and Bottom of file")
-print(pandas.concat([KenPom.head(), KenPom.tail()], sort=False))
+print(pd.concat([KenPom.head(), KenPom.tail()], sort=False))
 print("Prints 5 random entries")
 print(KenPom.sample(5))
-print("Prints number of teams that played each year")
-print(KenPom['year'].value_counts())
+print("Prints number of teams that played each Season")
+print(KenPom['Season'].value_counts())
 print("Prints B1G Conference for 2017-2018")
-print(KenPom.loc[(KenPom['conference'] == "B10") & (KenPom['year'] < 2019) & (KenPom['year'] > 2016)])
+print(KenPom.loc[(KenPom['conference'] == "B10") & (KenPom['Season'] < 2019) & (KenPom['Season'] > 2016)])
 print("Prints B1G Conference for 2017-2018, sorted by win%")
-print(KenPom.sort_values('wpct', ascending=False).loc[(KenPom['conference'] == "B10") & (KenPom['year'] < 2019) & (KenPom['year'] > 2016)])
+print(KenPom.sort_values('wpct', ascending=False).loc[(KenPom['conference'] == "B10") & (KenPom['Season'] < 2019) & (KenPom['Season'] > 2016)])
 print("Prints the first 10 columns (except conference) of every Michigan season")
-print(KenPom.loc[KenPom['name'] == "Michigan", list(KenPom.columns)[:10]].drop(columns=['conference']))
+print(KenPom.loc[KenPom['school'] == "Michigan", list(KenPom.columns)[:10]].drop(columns=['conference']))
 print("Prints quick peek of top 2019 contenders")
-print(KenPom.loc[KenPom['year'] == 2019].head(10))
+print(KenPom.loc[KenPom['Season'] == 2019].head(10))
 print("Prints the 15 2020 teams with the least losses")
-print(KenPom.sort_values(by=['losses', 'wins'], ascending=[True, False]).loc[KenPom['year'] == 2020].head(15))
+print(KenPom.sort_values(by=['losses', 'wins'], ascending=[True, False]).loc[KenPom['Season'] == 2020].head(15))
 
 # print(soupNugget, soupNugget.text)
 
