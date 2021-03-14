@@ -65,6 +65,7 @@ else:
         if school.split()[-1].isdigit():
             KenPom.loc[idx, 'seed'] = int(school.split()[-1])
             KenPom.loc[idx, 'name'] = " ".join(school.split()[:-1])
+            KenPom.loc[idx, 'school'] = " ".join(school.split()[:-1])
         else:
             KenPom.loc[idx, 'seed'] = 0
             KenPom.loc[idx, 'name'] = school
@@ -105,7 +106,7 @@ print(KenPom.loc[(KenPom['conference'] == "B10") & (KenPom['Season'] < 2019) & (
 print("Prints B1G Conference for 2017-2018, sorted by win%")
 print(KenPom.sort_values('wpct', ascending=False).loc[(KenPom['conference'] == "B10") & (KenPom['Season'] < 2019) & (KenPom['Season'] > 2016)])
 print("Prints the first 10 columns (except conference) of every Michigan season")
-print(KenPom.loc[KenPom['school'] == "Michigan", list(KenPom.columns)[:10]].drop(columns=['conference']))
+print(KenPom.loc[KenPom['school'] == "Michigan", list(KenPom.columns)[:10]].drop(columns=['conference', 'TeamID']))
 print("Prints quick peek of top 2019 contenders")
 print(KenPom.loc[KenPom['Season'] == 2019].head(10))
 print("Prints the 15 2020 teams with the least losses")
