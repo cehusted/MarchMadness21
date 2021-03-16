@@ -3,7 +3,7 @@ import pandas as pd
 def getTestData():
     print("Preparing test data...")
     Seeds = pd.read_csv('Data\MNCAATourneySeeds.csv')
-    Seeds = Seeds[Seeds['Season']==2019]
+    Seeds = Seeds[Seeds['Season'] == 2021]
     Seeds = Seeds.merge(Seeds, how='inner', on='Season', suffixes=('_x', '_y'))
     Seeds = Seeds[Seeds['TeamID_x'] < Seeds['TeamID_y']]
 
