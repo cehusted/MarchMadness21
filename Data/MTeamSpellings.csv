@@ -27,8 +27,6 @@ alcorn state,1108
 alcorn-state,1108
 alliant international,1109
 alliant intl,1109
-a&m-corpus chris,1394
-a&m-corpus christi,1394
 am-corpus-chris,1394
 american,1110
 american u.,1110
@@ -55,8 +53,8 @@ arkansas,1116
 arkansas st,1117
 arkansas st.,1117
 arkansas state,1117
-arkansas little rock,1114
 arkansas-little rock,1114
+arkansas little rock,1114
 arkansas-little-rock,1114
 arkansas-pine bluff,1115
 arkansas-pine-bluff,1115
@@ -81,8 +79,8 @@ ball-state,1123
 baylor,1124
 bellarmine,1468
 belmont,1125
-bethune-cookman,1126
 bethune cookman,1126
+bethune-cookman,1126
 binghamton,1127
 birmingham so,1128
 birmingham southern,1128
@@ -436,9 +434,9 @@ liberty,1251
 lipscomb,1252
 little rock,1114
 little-rock,1114
+liu,1254
 liu brooklyn,1254
 liu-brooklyn,1254
-liu,1254
 long beach st,1253
 long beach st.,1253
 long beach state,1253
@@ -481,10 +479,10 @@ marist,1265
 marquette,1266
 marshall,1267
 maryland,1268
+maryland eastern shore,1271
 maryland - e. shore,1271
 maryland-baltimore county,1420
 maryland-baltimore-county,1420
-maryland eastern shore,1271
 maryland-eastern shore,1271
 maryland-eastern-shore,1271
 massachusetts,1269
@@ -904,8 +902,6 @@ southern-mississippi,1379
 southern-u,1380
 southern-university,1380
 southern-utah,1381
-southwest missouri st.,1283
-southeast missouri st.,1283
 southwest missouri state,1283
 st bonaventure,1382
 st francis (ny),1383
@@ -930,13 +926,12 @@ st-josephs-pa,1386
 st-marys-ca,1388
 st-peters,1389
 st. bonaventure,1382
-st. francis bkn,1383
 st. francis (bkn),1383
-st. francis ny,1383
 st. francis (ny),1383
 st. francis pa,1384
 st. francis (pa),1384
 st. francis brooklyn,1383
+st. francis ny,1383
 st. francis-ny,1383
 st. john's,1385
 st. john's (ny),1385
@@ -954,6 +949,7 @@ stetson,1391
 stony brook,1392
 stony-brook,1392
 suny albany,1107
+southwest missouri st.,1283
 sw missouri st.,1283
 syracuse,1393
 tam c,1394
@@ -978,13 +974,12 @@ tex.-pan american,1410
 texas,1400
 texas a&m,1401
 texas a&m cc,1394
+texas a&m corpus chris,1394
 texas a&m corpus,1394
 texas a&m-cc,1394
-texas a&m corpus chris,1394
 texas a&m-corpus christi,1394
 texas arlington,1426
 texas christian,1395
-ut rio grande valley,1410
 texas rio grande valley,1410
 texas san antonio,1427
 texas southern,1411
@@ -1001,6 +996,7 @@ texas-el-paso,1431
 texas pan american,1410
 texas-pan american,1410
 texas-pan-american,1410
+ut rio grande valley,1410
 texas-rio grande valley,1410
 texas-san antonio,1427
 texas-san antonio(ut,1427
