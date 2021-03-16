@@ -4,12 +4,32 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras import Sequential
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.optimizers import Adam
 np.set_printoptions(formatter={'float_kind':'{:f}'.format})
 
 from getKenPom import getKPommy
 from prepare_data import getTrainData
 from test_data import getTestData
 
+
+def buildModel(data):
+    model = Sequential()
+    model.add(Dense(128, input_shape=(len(data.columns),), activation='relu'))
+    model.add(Dropout(0.15))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.1))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(2, activation='softmax'))
+
+    model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.01), metrics=['accuracy'])
+
+    return model
 
 def balance_data(data, name):
     print("Balancing Data in {}...".format(name))
@@ -39,13 +59,11 @@ def balance_data(data, name):
 
     return data
 
-
 def LogLoss(pred, GT):
     pred = pred.clip(0.000000001, 0.999999999)
     GT = GT.clip(0.000000001, 0.999999999)
     loss = -np.mean((GT * np.log(pred)) + (1 - GT) * np.log(1 - pred))
     return np.round(loss, 3)
-
 
 KenPom = getKPommy()
 gameData = getTrainData()
@@ -61,10 +79,13 @@ All Features Available:
                  'WinsTop25_2', 'WinsTop5_2', 'rank_2', 'seed_2', 'wins_2', 'losses_2', 'wpct_2',
                  'adjem_2', 'adjo_2', 'adjd_2', 'adjt_2', 'luck_2', 'adjems_2', 'oppos_2', 'oppds_2', 'adjemn_2',]'''
 
-featuresToUse = ['TourneyGame', 'AvgScore_1', 'AvgFG_1', 'AvgFG3_1', 'AvgFT_1', 'TOmargin_1', 'WinsTop25_1',
-                 'WinsTop5_1', 'rank_1', 'seed_1', 'wpct_1', 'adjem_1', 'adjo_1', 'adjd_1', 'luck_1', 'oppos_1',
-                 'AvgScore_2', 'AvgFG_2', 'AvgFG3_2', 'AvgFT_2', 'TOmargin_2', 'WinsTop25_2', 'WinsTop5_2', 'rank_2',
-                 'seed_2', 'wpct_2', 'adjem_2', 'adjo_2', 'adjd_2', 'luck_2', 'oppos_2']
+featuresToUse = ['TourneyGame', 'AvgScore_1', 'AvgOppScore_1', 'AvgFG_1', 'AvgFG3_1', 'AvgFT_1', 'TOmargin_1',
+                 'WinsTop25_1', 'wpct_1', 'adjem_1', 'adjo_1', 'adjd_1', 'luck_1', 'seed_1',
+                 'AvgScore_2', 'AvgOppScore_2', 'AvgFG_2', 'AvgFG3_2', 'AvgFT_2', 'TOmargin_2', 'WinsTop25_2',
+                 'wpct_2', 'adjem_2', 'adjo_2', 'adjd_2', 'luck_2', 'seed_2']
+
+featuresToUse = ['TourneyGame', 'AvgFG_1', 'AvgFG3_1',  'adjem_1', 'adjo_1', 'adjd_1', 'luck_1',
+                 'AvgFG_2', 'AvgFG3_2', 'adjem_2', 'adjo_2', 'adjd_2', 'luck_2']
 
 valData = gameData[gameData['TourneyGame'] == 1]
 trainData = gameData[gameData['TourneyGame'] == 0]
@@ -72,9 +93,9 @@ valData = balance_data(valData, 'valData')
 trainData = balance_data(trainData, 'trainData')
 
 print("Splitting into train/val/test sets...")
-trainY = trainData.pop('HomeTeamWon').astype('int')
+trainY = to_categorical(np.array(trainData.pop('HomeTeamWon').astype('int')))
 trainX = trainData[featuresToUse]
-valY = valData.pop('HomeTeamWon').astype('int')
+valY = to_categorical(np.array(valData.pop('HomeTeamWon').astype('int')))
 valX = valData[featuresToUse]
 testX = testData[featuresToUse]
 
@@ -84,29 +105,64 @@ trainScaler = StandardScaler().fit(trainX)
 trainX = pd.DataFrame(trainScaler.transform(trainX), index=trainX.index, columns=trainX.columns)
 valX = pd.DataFrame(trainScaler.transform(valX), index=valX.index, columns=valX.columns)
 
+# Practice training on Keras model
+earlyStopping = EarlyStopping(monitor="val_loss", patience=10, verbose=0, restore_best_weights=True)
+adaptiveLR = ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, verbose=1)
+# model = buildModel(trainX)
+# model.fit(trainX, trainY, batch_size=64, epochs=100, validation_data=(valX, valY), shuffle=True, verbose=2, callbacks=[earlyStopping, adaptiveLR])
+# predsAll = model.predict(valX, batch_size=64)
+# print("LogLoss on validation set: {}".format(LogLoss(predsAll[:, 1], np.argmax(valY, axis=1))))
+
 ########### Neural Network Parameters #############
-hidden_layer_sizes = (10, 6, 4)
+hidden_layer_sizes = (256, 128, 64, 32)
 activation = 'relu'
 solver = 'adam'
-alpha = 0.0001
-batch_size = 32
-learning_rate = 'constant'
-learning_rate_init = 0.01
+alpha = 0.001
+batch_size = 64
+learning_rate = 'adaptive'
+learning_rate_init = 0.001
 max_iter = 100
 random_state = 69
-tol = 0.0001
-verbose = False
+tol = 0.001
+verbose = True
+hyperparameter_search = False
 ###################################################
-
-for alpha in [0.0001, 0.001, 0.01, 0.1]:
-    for learning_rate_init in [0.0001, 0.001, 0.01, 0.1]:
-        for tol in [0.0001, 0.001, 0.01]:
-            for batch_size in [32, 64, 128]:
+if hyperparameter_search:
+    for hidden in [(8, 5, 3), (25, 25, 25, 25, 25), (256, 32, 8), (256, 128, 64, 32)]:
+        for alpha in [0.0001, 0.001, 0.01]:
+            for learning_rate_init in [0.0001, 0.001, 0.01]:
                 NN = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, activation=activation, solver=solver, alpha=alpha,
                                    batch_size=batch_size, learning_rate=learning_rate, learning_rate_init=learning_rate_init,
                                    max_iter=max_iter, random_state=random_state, tol=tol, verbose=verbose)
 
                 NN_trained = NN.fit(trainX, trainY)
                 preds = NN.predict_proba(valX)
-                print("({}, {}, {}, {}) --- Train Loss: {} --- Test Loss: {}".format(alpha, learning_rate_init, tol,
-                      batch_size, np.round(NN_trained.best_loss_, 3), LogLoss(preds[:, 1], valY)))
+                print("({}, {}, {}) --- Train Loss: {} --- Test Loss: {}".format(hidden, alpha, learning_rate_init,
+                      np.round(NN_trained.best_loss_, 3), LogLoss(preds[:, 1], valY)))
+
+gameData = balance_data(gameData, 'gameData')
+trainY = to_categorical(np.array(gameData.pop('HomeTeamWon').astype('int')))
+trainX = gameData[featuresToUse]
+scaler = StandardScaler().fit(trainX)
+trainX = pd.DataFrame(scaler.transform(trainX), index=trainX.index, columns=trainX.columns)
+testX = testData[featuresToUse]
+testX = pd.DataFrame(scaler.transform(testX), index=testX.index, columns=testX.columns)
+
+model = buildModel(trainX)
+model.fit(trainX, trainY, batch_size=batch_size, epochs=max_iter, validation_split=0.05, shuffle=True, verbose=2, callbacks=[earlyStopping, adaptiveLR])
+predsAll = model.predict(testX, batch_size=batch_size)
+
+# NN = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, activation=activation, solver=solver, alpha=alpha,
+#                    batch_size=batch_size, learning_rate=learning_rate, learning_rate_init=learning_rate_init,
+#                    max_iter=max_iter, random_state=random_state, tol=tol, verbose=verbose).fit(trainX, trainY)
+#
+# print("Best loss: {}".format(NN.best_loss_))
+# predsAll = NN.predict_proba(testX)
+
+preds_submission = pd.merge(testData, pd.DataFrame(predsAll), left_index=True, right_index=True)
+preds_submission.loc[preds_submission['TeamID_1'] < preds_submission['TeamID_2'], 'Pred'] = preds_submission[1]
+preds_submission.loc[preds_submission['TeamID_1'] > preds_submission['TeamID_2'], 'Pred'] = preds_submission[0]
+preds_submission = preds_submission[['ID', 'Pred']]
+
+print("Final predictions:", preds_submission)
+preds_submission.to_csv("Stage2_Submission.csv", index=False)
