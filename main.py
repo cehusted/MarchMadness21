@@ -14,6 +14,7 @@ np.set_printoptions(formatter={'float_kind':'{:f}'.format})
 from getKenPom import getKPommy
 from prepare_data import getTrainData
 from test_data import getTestData
+from simulateBracket import simulate
 
 
 def buildModel(data):
@@ -182,3 +183,7 @@ preds_submission['Pred'] = preds_submission['Pred'].clip(lower=0.05, upper=0.95)
 
 print("Final predictions:", preds_submission)
 preds_submission.to_csv("Stage2_Submission.csv", index=False)
+
+print("Simulating bracket...")
+winner = simulate(preds_submission)
+print("\n --- {} is your predicted winner! ---".format(winner))
