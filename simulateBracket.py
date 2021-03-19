@@ -1,6 +1,15 @@
 import pandas as pd
 import numpy as np
 
+def getTeamName(teams, id):
+    name = teams.loc[teams['TeamID'] == int(id), 'TeamName']
+    return name.values[0]
+
+def getSeed(seeds, w):
+    regionSeed = seeds.loc[seeds['TeamID'] == int(w), 'Seed'].tolist()[0][:3]
+    return '[' + str(int(regionSeed[-2:])) + ']'
+
+
 def simulate(p):
     season = 2021
     seeds = pd.read_csv(r"Data\MNCAATourneySeeds.csv")
@@ -18,15 +27,16 @@ def simulate(p):
             team2 = team1
             team1 = tmp
         assert(team1 < team2)
-        team1_Odds = p.loc[p['ID'] == str(2021) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
+        team1_Odds = p.loc[p['ID'] == str(season) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
         winner = team1 if np.random.rand() < team1_Odds else team2
         seeds = seeds.append({'Seed': '{}'.format(playIn), 'TeamID': winner}, ignore_index=True)
 
-    seeds = seeds[seeds['Seed'].apply(len) == 3].reset_index(drop=True)
+    #seeds = seeds[seeds['Seed'].apply(len) == 3].reset_index(drop=True)
 
     # Simulate First Round up to Final 4
     rounds = {1: 'First Round', 2: 'Round of 32', 3: 'Sweet 16', 4: 'Elite 8'}
-    gameWinners = seeds.set_index('Seed').to_dict()['TeamID']
+    gameWinners = seeds[seeds['Seed'].apply(len) == 3].set_index('Seed').to_dict()['TeamID']
+    print(gameWinners['W16'])
     for round, roundName in rounds.items():
         print("\n################### {} Predictions ###################".format(roundName))
         for region in ['W', 'X', 'Y', 'Z']:
@@ -40,12 +50,12 @@ def simulate(p):
                     team1 = tmp
                 assert(team1 < team2)
 
-                team1_Odds = p.loc[p['ID'] == str(2021) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
+                team1_Odds = p.loc[p['ID'] == str(season) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
                 winner = team1 if np.random.rand() < team1_Odds else team2
 
-                team1Name = teams.loc[teams['TeamID'] == int(team1), 'TeamName'].values[0]
-                team2Name = teams.loc[teams['TeamID'] == int(team2), 'TeamName'].values[0]
-                winnerName = teams.loc[teams['TeamID'] == int(winner), 'TeamName'].values[0]
+                team1Name = getSeed(seeds, team1) + getTeamName(teams, team1)
+                team2Name = getSeed(seeds, team2) + getTeamName(teams, team2)
+                winnerName = getTeamName(teams, winner)
                 print("{} ({}%) vs. {}..... {}".format(team1Name, np.round(100 * team1_Odds, 1), team2Name, winnerName.upper()))
 
                 gameWinners[slot] = winner
@@ -61,12 +71,12 @@ def simulate(p):
             team1 = tmp
         assert (team1 < team2)
 
-        team1_Odds = p.loc[p['ID'] == str(2021) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
+        team1_Odds = p.loc[p['ID'] == str(season) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
         winner = team1 if np.random.rand() < team1_Odds else team2
 
-        team1Name = teams.loc[teams['TeamID'] == int(team1), 'TeamName'].values[0]
-        team2Name = teams.loc[teams['TeamID'] == int(team2), 'TeamName'].values[0]
-        winnerName = teams.loc[teams['TeamID'] == int(winner), 'TeamName'].values[0]
+        team1Name = getSeed(seeds, team1) + getTeamName(teams, team1)
+        team2Name = getSeed(seeds, team2) + getTeamName(teams, team2)
+        winnerName = getTeamName(teams, winner)
         print("{} ({}%) vs. {}..... {}".format(team1Name, np.round(100 * team1_Odds, 1), team2Name, winnerName.upper()))
 
         gameWinners[slotFF] = winner
@@ -80,12 +90,12 @@ def simulate(p):
         team1 = gameWinners['R5YZ']
         team2 = gameWinners['R5WX']
 
-    team1_Odds = p.loc[p['ID'] == str(2021) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
+    team1_Odds = p.loc[p['ID'] == str(season) + '_' + team1 + '_' + team2, 'Pred'].tolist()[0]
     winner = team1 if np.random.rand() < team1_Odds else team2
 
-    team1Name = teams.loc[teams['TeamID'] == int(team1), 'TeamName'].values[0]
-    team2Name = teams.loc[teams['TeamID'] == int(team2), 'TeamName'].values[0]
-    winnerName = teams.loc[teams['TeamID'] == int(winner), 'TeamName'].values[0]
+    team1Name = getSeed(seeds, team1) + getTeamName(teams, team1)
+    team2Name = getSeed(seeds, team2) + getTeamName(teams, team2)
+    winnerName = getTeamName(teams, winner)
     print("{} ({}%) vs. {}..... {}".format(team1Name, np.round(100 * team1_Odds, 1), team2Name, winnerName.upper()))
 
     gameWinners['R6CH'] = winner
@@ -93,6 +103,6 @@ def simulate(p):
 
 if __name__ == "__main__":
     # Supply path to your own predictions file
-    predictions = pd.read_csv(r"Stage2_Submission_decent2.csv")
+    predictions = pd.read_csv(r"Stage2_Submission_CamsFaveSoFar.csv")
     winner = simulate(predictions)
     print("\n --- {} is your predicted winner! ---".format(winner))
