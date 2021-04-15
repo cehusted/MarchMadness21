@@ -9,7 +9,6 @@ def getSeed(seeds, w):
     regionSeed = seeds.loc[seeds['TeamID'] == int(w), 'Seed'].tolist()[0][:3]
     return '[' + str(int(regionSeed[-2:])) + ']'
 
-
 def simulate(p):
     season = 2021
     seeds = pd.read_csv(r"Data\MNCAATourneySeeds.csv")
@@ -36,7 +35,6 @@ def simulate(p):
     # Simulate First Round up to Final 4
     rounds = {1: 'First Round', 2: 'Round of 32', 3: 'Sweet 16', 4: 'Elite 8'}
     gameWinners = seeds[seeds['Seed'].apply(len) == 3].set_index('Seed').to_dict()['TeamID']
-    print(gameWinners['W16'])
     for round, roundName in rounds.items():
         print("\n################### {} Predictions ###################".format(roundName))
         for region in ['W', 'X', 'Y', 'Z']:
@@ -103,6 +101,6 @@ def simulate(p):
 
 if __name__ == "__main__":
     # Supply path to your own predictions file
-    predictions = pd.read_csv(r"Stage2_Submission_CamsFaveSoFar.csv")
+    predictions = pd.read_csv(r"Stage2_Submission1.csv")
     winner = simulate(predictions)
     print("\n --- {} is your predicted winner! ---".format(winner))

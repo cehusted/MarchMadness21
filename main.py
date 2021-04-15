@@ -1,5 +1,8 @@
 import warnings
 warnings.simplefilter(action='ignore')
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from copy import deepcopy
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -15,6 +18,7 @@ from getKenPom import getKPommy
 from prepare_data import getTrainData
 from test_data import getTestData
 from simulateBracket import simulate
+from Histogram_results import plotPredHist
 
 
 def buildModel(data):
@@ -103,15 +107,16 @@ All Features Available:
                  'AvgFT_1', 'AvgOppFT_1', 'TOmargin_1', 'PointMargin_1', 'WinsTop25_1', 'WinsTop5_1', 'rank_1',
                  'seed_1', 'wins_1', 'losses_1', 'wpct_1', 'adjem_1', 'adjo_1', 'adjd_1', 'adjt_1',
                  'luck_1', 'adjems_1', 'oppos_1', 'oppds_1', 'adjemn_1', 'AvgScore_2', 'AvgOppScore_2', 'AvgFG_2',
-                 'AvgOppFG_2','AvgFG3_2', 'AvgOppFG3_2', 'AvgFT_2', 'AvgOppFT_2', 'TOmargin_2', 'PointMargin_2',
+                 'AvgOppFG_2', 'AvgFG3_2', 'AvgOppFG3_2', 'AvgFT_2', 'AvgOppFT_2', 'TOmargin_2', 'PointMargin_2',
                  'WinsTop25_2', 'WinsTop5_2', 'rank_2', 'seed_2', 'wins_2', 'losses_2', 'wpct_2',
                  'adjem_2', 'adjo_2', 'adjd_2', 'adjt_2', 'luck_2', 'adjems_2', 'oppos_2', 'oppds_2', 'adjemn_2']'''
 
-featuresToUse = ['AvgScore_1', 'AvgOppScore_1', 'AvgFG_1', 'AvgOppFG_1', 'AvgFG3_1', 'AvgOppFG3_1',
-                 'AvgFT_1', 'AvgOppFT_1', 'TOmargin_1', 'PointMargin_1', 'WinsTop25_1', 'WinsTop5_1',
-                 'seed_1', 'wpct_1', 'adjo_1', 'adjd_1', 'luck_1', 'AvgScore_2', 'AvgOppScore_2', 'AvgFG_2',
-                 'AvgOppFG_2','AvgFG3_2', 'AvgOppFG3_2', 'AvgFT_2', 'AvgOppFT_2', 'TOmargin_2', 'PointMargin_2',
-                 'WinsTop25_2', 'WinsTop5_2', 'seed_2', 'wpct_2', 'adjo_2', 'adjd_2', 'luck_2']
+featuresToUse = ['AvgScore_1', 'AvgFG_1', 'AvgOppFG_1', 'AvgFG3_1', 'TOmargin_1', 'PointMargin_1', 'wins_1', 'losses_1',
+                 'adjo_1', 'adjd_1', 'luck_1', 'oppos_1', 'oppds_1', 'rank_1', 'WinsTop25_1', 'wpct_1',
+                 'AvgScore_2', 'AvgFG_2', 'AvgOppFG_2', 'AvgFG3_2', 'TOmargin_2', 'PointMargin_2', 'wins_2', 'losses_2',
+                 'adjo_2', 'adjd_2', 'luck_2', 'oppos_2', 'oppds_2', 'rank_2', 'WinsTop25_2', 'wpct_2']
+
+featuresToUse = ['AvgFT_1', 'AvgOppFT_1', 'adjem_1', 'AvgFT_2', 'AvgOppFT_2', 'adjem_2']
 
 # Split into train/val splits for practice training (on known tourney results), and balance team1 and team2 winning
 valData = gameData[gameData['TourneyGame'] == 1]
@@ -152,7 +157,7 @@ hyperparameterSearch(hyperparameter_search)
 
 # Prepare callbacks and practice training on Keras model
 earlyStopping = EarlyStopping(monitor="val_loss", patience=10, verbose=0, restore_best_weights=True)
-adaptiveLR = ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, verbose=1)
+adaptiveLR = ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, verbose=0)
 # model = buildModel(trainX)
 # model.fit(trainX, trainY, batch_size=64, epochs=100, validation_data=(valX, valY), shuffle=True, verbose=2, callbacks=[earlyStopping, adaptiveLR])
 # predsAll = model.predict(valX, batch_size=64)
@@ -175,14 +180,19 @@ preds_Keras = predKeras(trainX, to_categorical(np.array(trainY)), testX, batch_s
 preds_MLP = predMLP(trainX, trainY)
 
 # Prepare and save Stage2 submission file
-preds_submission = testData.merge(pd.DataFrame(preds_Keras), left_index=True, right_index=True)
+preds_submission = testData.merge(pd.DataFrame(preds_MLP), left_index=True, right_index=True)
 preds_submission.loc[preds_submission['TeamID_1'] < preds_submission['TeamID_2'], 'Pred'] = preds_submission[1]
 preds_submission.loc[preds_submission['TeamID_1'] > preds_submission['TeamID_2'], 'Pred'] = preds_submission[0]
 preds_submission = preds_submission[['ID', 'Pred']]
 preds_submission['Pred'] = preds_submission['Pred'].clip(lower=0.05, upper=0.95)
 
-print("Final predictions:", preds_submission)
+submission2 = deepcopy(preds_submission)
+submission2.loc[(submission2['Pred'] < 0.5) & (submission2['Pred'] > 0.40), 'Pred'] -= 0.01
+submission2.loc[(submission2['Pred'] > 0.5) & (submission2['Pred'] < 0.60), 'Pred'] += 0.01
 preds_submission.to_csv("Stage2_Submission.csv", index=False)
+submission2.to_csv("Stage2_Submission_post.csv", index=False)
+plotPredHist("Stage2_Submission.csv", 1)
+plotPredHist("Stage2_Submission_post.csv", 2)
 
 print("Simulating bracket...")
 winner = simulate(preds_submission)
